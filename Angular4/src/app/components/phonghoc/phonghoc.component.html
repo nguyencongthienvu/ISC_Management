@@ -1,0 +1,101 @@
+<!-- Breadcrumb-->
+<div class="breadcrumb-holder">
+  <div class="container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="">Trang chủ</a></li>
+      <li class="breadcrumb-item active">Phòng học</li>
+    </ul>
+  </div>
+</div>
+
+<section>
+  <div class="container-fluid">
+    <!--page header -->
+    <header>
+      <h1 class="h3 display">Phòng học</h1>
+    </header>
+    <!-- Example DataTables Card-->
+    <div class="card mb-3">
+      <div class="card-header">
+        <button type="button" class="btn btn-primary fa fa-plus text-light float-right room" data-toggle="modal" data-target="#exampleModalCenter"(click)="clear()" >
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover" id="rooms" width="100%">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Mã phòng học</th>
+                <th>Tên phòng học</th>
+                <th>Số lượng tối đa</th>
+                <th>Trạng thái</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let room of dataRooms, let i = index">
+                <td>{{i+1}}</td>
+                <td>{{room.code_PHG}}</td>
+                <td>{{room.kinOf_PHG}}</td>
+                <td>{{room.maxQuantity_PHG}}</td>
+                <td *ngIf="room.active ==1" >Inactive</td>
+                <td *ngIf="room.active ==0" >Active</td>
+                <td>
+                  <a class="fa fa-check text-warning mt-1 mb-1 ml-1" data-toggle="modal" data-target="#exampleModalCenter"(click)="get_room(room)"></a>
+                  <a disabled *ngIf="room.active ==0; else delete" class="fa fa-remove text-danger mt-1 mb-1 ml-1" (click)="deleteRoom(room.id_PHG)"></a>
+                  <ng-template #delete><a class="fa fa-remove text-danger mt-1 mb-1 ml-1" (click)="deleteRoom(room.id_PHG)"></a></ng-template>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Modal add room-->
+<div id="exampleModalCenter" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Thông Tin Phòng Học</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #formRoom="ngForm">
+            <div class="form-group">
+              <label for="subjectID">Mã phòng học</label>
+              <input type="text" class="form-control" [(ngModel)]="code_PHG"  name="code_PHG" required>
+              <!-- <div class="invalid-feedback">Please provide your name.</div> -->
+            </div>
+            <div class="form-group">
+              <label for="subjectName">Tên phòng học</label>
+              <input type="text" class="form-control" [(ngModel)]="kinOf_PHG" name="kinOf_PHG" required>
+            </div>
+            <div class="form-group">
+              <label for="hour">Số lượng tối đa</label>
+              <input type="number" min=1 class="form-control" [(ngModel)]="maxQuantity_PHG" name="maxQuantity_PHG" required>
+            </div>
+            <div class="form-group">
+              <label for="active">Trạng thái</label><br>
+              <select name="active" class="custom-select" [(ngModel)]="active">
+                <option value=0>Active</option>
+                <option value=1>Inactive</option>
+              </select>
+            </div>
+            <input type="hidden" name="id_PHG" [(ngModel)]="id_PHG">
+          </form>
+
+        </div>
+        <div class="modal-footer">
+            <button [disabled]="formRoom.invalid" type="button" class="btn btn-primary" (click)="isSubmit?onSubmit(formRoom):update_room(formRoom)" data-dismiss="modal">Lưu</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">Thoát</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+

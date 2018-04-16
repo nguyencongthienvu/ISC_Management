@@ -1,0 +1,242 @@
+<!-- Breadcrumb-->
+<div class="breadcrumb-holder">
+  <div class="container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="">Trang Chủ</a></li>
+      <li class="breadcrumb-item active">Khóa Học</li>
+    </ul>
+  </div>
+</div>
+
+<section>
+  <div class="container-fluid">
+    <!--page header -->
+    <header>
+      <h1 class="h3 display">Khóa Học</h1>
+    </header>
+    <!-- Example DataTables Card-->
+    <div class="card mb-3">
+      <div class="card-header">
+        <button type="button" class="btn btn-primary fa fa-plus text-light float-right addintakes" data-toggle="modal" data-target="#addintakes" (click)="Reset(formIntakes) && check(date)">
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover" id="dataTable" width="100%">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Tên Khóa Họca</th>
+                <th>Ngày Khai Giảng</th>
+                <th>Ngày Kết Thúc</th>
+                <th>Số Lượng Tối Đa</th>
+                <th>Tình Trạng</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let intakes of dataIntakes, let i = index">
+                <td scope="row">{{i+1}}</td>
+                <td>{{ intakes.name_ITK }}</td>
+                <td>{{ intakes.dayStart_ITK| date:"dd/MM/yyyy" }}</td>
+                <td>{{ intakes.dayEnd_ITK| date:"dd/MM/yyyy" }}</td>
+                <td>{{ intakes.maxQuantity_ITK }}</td>
+                <td *ngIf="intakes.status_ITK== 0;">Chưa mở</td>
+                <td *ngIf="intakes.status_ITK== 1;">Đang học </td>
+                <td *ngIf="intakes.status_ITK== 2">Đã hoàn thành </td>
+                <td *ngIf="intakes.status_ITK== 3">Hủy</td>
+                <td>
+                  <a class="fa fa-check text-warning mt-1 mb-1 ml-1" data-toggle="modal" data-target="#editintakes" (click)="getupdateIntakes(intakes)"></a>
+                  <a disabled *ngIf="intakes.status_ITK !=3; else delete" class="fa fa-remove text-danger mt-1 mb-1 ml-1" (click)="deleteIntakes(intakes.id_ITK)"></a>
+                  <ng-template #delete><a disabled *ngIf="intakes.status_ITK !=3" class="fa fa-remove text-danger mt-1 mb-1 ml-1" (click)="deleteIntakes(intakes.id_ITK)"></a></ng-template>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Modal add intake-->
+<div class="modal fade" id="addintakes" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Thông Tin Khóa Học</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        
+      </div>
+      <div class="modal-body">
+          <div *ngIf="dayend.value && dayend.value==daystart.value" class="alert alert-danger">
+              Ngày kết thúc và ngày bắt đầu không được trùng nhau
+        </div>
+        <div *ngIf="dayend.value && dayend.value<daystart.value" class="alert alert-danger">
+             Ngày kết thúc phải lớn hơn ngày bắt đầu
+       </div>
+        <form #formIntakes="ngForm">
+          <div class="form-group">
+            <label for="name"><strong>Tên khóa học</strong></label>
+            <div *ngIf="txtname_ITK.invalid && (txtname_ITK.dirty || txtname_ITK.touched)"  class="alert alert-danger">                 
+                <div *ngIf="txtname_ITK.errors?.required">
+                    Tên khóa học không được trống
+                  </div>
+                </div>
+                <div *ngIf="txtname_ITK.value">
+                    <div *ngIf="show2 == 'Bị trùng với cơ sở dữ liệu' && kiemtra==false  " class="alert alert-danger">
+                      {{show2}}
+                    </div>
+                  </div>
+              <input type="text" 
+                    class="form-control" 
+                    [(ngModel)]="name_ITK" 
+                    name="name_ITK" 
+                    #txtname_ITK= "ngModel"
+                    placeholder="Nhập Khóa Học"
+                    (keyup)="keyup(txtname_ITK.value)"
+                    required>
+          </div>
+          <div class="form-group ">
+            <label for="dayStart" ><strong>Ngày khai giảng</strong></label>
+            <div *ngIf="daystart.invalid && (daystart.dirty || daystart.touched)"  class="alert alert-danger">                 
+                <div *ngIf="daystart.errors?.required">
+                    Ngày khai giảng không được phép trống.
+                </div>
+            </div>
+            <div *ngIf="daystart.value && daystart.value<check()" class="alert alert-danger">
+                Ngày khai giảng không được nhỏ hơn ngày hiện tại
+           </div>
+            <div *ngIf="daystart.value && daystart.value==check()" class="alert alert-danger">
+                Ngày khai giảng không được bằng ngày hiện tại
+           </div>
+             <input type="date" class="form-control" [(ngModel)]="dayStart_ITK" name="dayStart_ITK" #daystart="ngModel" required>
+          </div>
+          <div class="form-group ">
+            <label for="dayEnd" ><strong>Ngày kết thúc</strong></label>
+            <div *ngIf="dayend.invalid && (dayend.dirty || dayend.touched)"  class="alert alert-danger">                 
+                <div *ngIf="dayend.errors?.required">
+                    Ngày kết thúc không được phép trống.
+                </div>
+            </div>
+           <div *ngIf="dayend.value && dayend.value<check()" class="alert alert-danger">
+                Ngày kết thúc không được nhỏ hơn ngày hiện tại
+           </div>
+            <div *ngIf="dayend.value && dayend.value==check()" class="alert alert-danger">
+                Ngày kết thúc không được bằng ngày hiện tại
+           </div>
+            <input type="date" class="form-control" [(ngModel)]="dayEnd_ITK" name="dayEnd_ITK" #dayend="ngModel" required>
+          </div>
+          <div class="form-group ">
+            <label for="maxquantity" ><strong>Số lượng học viên tối đa</strong></label>
+            <div *ngIf="maxQuantity.invalid && (maxQuantity.dirty || maxQuantity.touched)"
+                    class="alert alert-danger">
+                  <div *ngIf="maxQuantity.errors?.required">
+                    Số lượng không hợp lệ.
+                  </div>
+                  <div *ngIf="maxQuantity.errors?.min || maxQuantity.errors?.pattern">
+                    Số lượng phải lớn hơn 1 hoặc phải là số dương
+                  </div>
+                </div>
+              <input required type="number" pattern="[0-9]*" class="form-control" min="1" [(ngModel)]="maxQuantity_ITK" #maxQuantity="ngModel" name="maxQuantity_ITK">
+          </div>
+          <div class="form-group ">
+            <label for="status_ITK" ><strong>Tình trạng</strong></label>
+              <select name="status_ITK" class="form-control select2" [(ngModel)]="status_ITK" id="stt" >
+                <option value=0>Chưa mở</option>
+                <option value=1>Đang học</option>
+                <option value=2>Đã hoàn thành</option>
+                <option value=3>Hủy</option>
+                
+              </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button [disabled]="formIntakes.invalid || !kiemtra || dayend.value==daystart.value ||  dayend.value<daystart.value || opValue == -1 || daystart.value<check() || daystart.value==check() || dayend.value<check() || dayend.value<check()" type="submit" class="btn btn-primary"  (click)="onSubmit(formIntakes)" data-dismiss="modal">Thêm</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal edit intake-->
+<div class="modal fade" id="editintakes" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Thông Tin Khóa Học</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #formEditIntakes="ngForm" ng-controller="DateController as dateCtrl">
+            <div class="form-group">
+                <label for="name"><strong>Tên khóa học</strong></label>
+                <div *ngIf="name.invalid && (name.dirty || name.touched)"  class="alert alert-danger">                 
+                    <div *ngIf="name.errors?.required">
+                        Tên khóa học không được trống
+                      </div>
+                    </div>
+                  <input type="text" class="form-control" [(ngModel)]="name_ITK" name="name_ITK"  #name="ngModel" required>
+              </div>
+              <div class="form-group ">
+                <label for="daystart" ><strong>Ngày khai giảng</strong></label>
+                <div *ngIf="day.invalid && (day.dirty || day.touched)"  class="alert alert-danger">                 
+                    <div *ngIf="day.errors?.required">
+                        Ngày khai giảng không được phép trống.
+                    </div>
+                    <!-- <div *ngIf="dayStart == dayend">
+                        Ngày khai giảng phải lớn hơn ngày kết thúc.
+                    </div> -->
+                </div>
+                 <input  type="date" class="form-control" [(ngModel)]="dayStart_ITK" name="dayStart_ITK" #day="ngModel" required>
+              </div>
+              <div class="form-group ">
+                <label for="inputPhone" ><strong>Ngày kết thúc</strong></label>
+                <div *ngIf="end.invalid && (end.dirty || dayend.touched)"  class="alert alert-danger">                 
+                    <div *ngIf="end.errors?.required">
+                        Ngày kết thúc không được phép trống.
+                    </div>
+                </div>
+                  <input type="date" class="form-control" [(ngModel)]="dayEnd_ITK" name="dayEnd_ITK" #end="ngModel" required>
+              </div>
+              <div class="form-group ">
+                <label for="maxquantity" ><strong>Số lượng học viên tối đa</strong></label>
+                <div *ngIf="max.invalid && (max.dirty || max.touched)"
+                    class="alert alert-danger">
+                  <div *ngIf="max.errors?.required">
+                    Số lượng trống yêu cầu nhập.
+                  </div>
+                  <div *ngIf="max.errors?.min || max.errors?.pattern">
+                    Số lượng phải lớn hơn 1 hoặc phải là số dương
+                  </div>
+                </div>
+                <input type="number" class="form-control" min="1" [(ngModel)]="maxQuantity_ITK" name="maxQuantity_ITK" #max="ngModel" pattern="[0-9]*" required>
+              </div>
+              <div class="form-group ">
+                <label for="status_ITK" ><strong>Tình trạng</strong></label>
+                <div *ngIf="st.invalid && (st.dirty || st.touched)"
+                    class="alert alert-danger">
+                  <div *ngIf="st.errors?.required">
+                    Vui lòng chọn tình trạng.
+                  </div>
+                </div>
+                <select name="status_ITK" class="custom-select" [(ngModel)]="status_ITK" #st="ngModel" required>
+                    <option value=0>Chưa mở</option>
+                    <option value=1>Đang học</option>
+                    <option value=2>Đã hoàn thành</option>
+                    <option value=3>Hủy</option>
+                </select>
+              </div>
+          <input type="hidden" [(ngModel)]="id_ITK" class="form-control" name="id_ITK">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button  [disabled]="formEditIntakes.invalid" type="submit" class="btn btn-primary"  (click)="updateIntakes(formEditIntakes)" data-dismiss="modal">Lưu</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+      </div>
+    </div>
+  </div>
+</div>

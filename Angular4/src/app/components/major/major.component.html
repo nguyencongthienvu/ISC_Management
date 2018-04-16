@@ -1,0 +1,179 @@
+<!-- Breadcrumb-->
+<div class="breadcrumb-holder">
+  <div class="container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="">Trang chủ</a></li>
+      <li class="breadcrumb-item active">Môn học</li>
+    </ul>
+  </div>
+</div>
+<section>
+  <div class="container-fluid">
+    <!-- Page Header-->
+    <header>
+      <h1 class="h3 display">Chuyên ngành</h1>
+    </header>
+    <!-- modal add major -->
+    <div id="add-major" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Thông tin chuyên ngành</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form #formMajor="ngForm">
+                <div class="form-group">
+                    <label for="majorID">Mã chuyên ngành</label>
+                    <div *ngIf="code_MJR2.invalid && (code_MJR2.dirty || code_MJR2.touched)"  class="alert alert-danger">                 
+                        <div *ngIf="code_MJR2.errors?.required">
+                            Mã chuyên ngành không được trống.
+                          </div>
+                    </div>
+                    <div *ngIf="code_MJR2.value">
+                      <div *ngIf="show == 'Được dùng'" class="alert alert-success">
+                        {{show}}
+                      </div>
+                      <div *ngIf="show == 'Bị trùng với cơ sở dữ liệu'" class="alert alert-danger">
+                        {{show}}
+                      </div>
+                    </div>
+                    <input type="text" (keyup)=keyup(code_MJR2.value) [(ngModel)]="code_MJR" class="form-control" name="code_MJR" placeholder="Mã chuyên ngành" #code_MJR2="ngModel" required>
+                    <!-- <div class="invalid-feedback">Please provide your name.</div> -->
+                  </div>
+              <div class="form-group">
+                <label for="name_MJR">Tên chuyên ngành</label>
+                <div *ngIf="name_MJR2.invalid && (name_MJR2.dirty || name_MJR2.touched)"  class="alert alert-danger">                 
+                    <div *ngIf="name_MJR2.errors?.required">
+                        Tên chuyên ngành không được trống.
+                    </div>
+                </div>
+                <input type="text" [(ngModel)]="name_MJR" class="form-control" name="name_MJR" placeholder="Tên chuyên ngành" #name_MJR2="ngModel" required>
+              </div>
+              <label><strong>Trạng thái</strong></label><br>
+              <div *ngIf="(st_1.invalid && (st_1.dirty || st_1.touched))||(st_2.invalid && (st_2.dirty || st_2.touched))" class="alert alert-danger">
+                <div *ngIf="st_1.errors?.required || st_2.errors?.required">
+                    Trạng thái không được để trống.
+                </div>
+              </div>
+              <div class="form-group form-inline i-checks">
+                <input [(ngModel)]="status_MJR" #st_1 ="ngModel" id="status_MJR1" type="radio" [value]=0 name="status_MJR" class="form-control-custom radio-custom">
+                <label for="status_MJR1">Inactive</label>
+                &nbsp;&nbsp;&nbsp;
+                <input [(ngModel)]="status_MJR" #st_2="ngModel" id="status_MJR2" type="radio"  [value]=1 name="status_MJR" class="form-control-custom radio-custom">
+                <label for="status_MJR2">Active</label>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+              <button [disabled]="formMajor.invalid || !kiemtra" (click)="onSubmit(formMajor)" type="submit" class="btn btn-primary" data-dismiss="modal">Thêm</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end modal addd subject -->
+      <!-- end modal add subject -->
+
+    <!-- modal edit subject -->
+    <div id="edit-major" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Thông tin môn học</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form #formEditMajor="ngForm">
+             <div class="form-group">
+                    <label for="majorID">Mã chuyên ngành</label>
+                    <div *ngIf="code_MJR3.invalid && (code_MJR3.dirty || code_MJR3.touched)"  class="alert alert-danger">                 
+                        <div *ngIf="code_MJR3.errors?.required">
+                            Mã chuyên ngành không được trống.
+                          </div>
+                    </div>
+                    <input readonly  type="text" [(ngModel)]="code_MJR" class="form-control" name="code_MJR" placeholder="Mã chuyên ngành" #code_MJR3="ngModel" required>
+                    <!-- <div class="invalid-feedback">Please provide your name.</div> -->
+                  </div>
+              <div class="form-group">
+                <label for="name_MJR">Tên chuyên ngành</label>
+                <div *ngIf="name_MJR3.invalid && (name_MJR3.dirty || name_MJR3.touched)"  class="alert alert-danger">                 
+                    <div *ngIf="name_MJR3.errors?.required">
+                        Tên chuyên ngành không được trống.
+                      </div>
+
+                </div>
+                <input type="text" [(ngModel)]="name_MJR" class="form-control" name="name_MJR" placeholder="Tên chuyên ngành" #name_MJR3="ngModel" required>
+              </div>
+              <label><strong>Trạng thái</strong></label><br>
+              <div *ngIf="(st_3.invalid && (st_3.dirty || st_3.touched))||(st_4.invalid && (st_4.dirty || st_4.touched))" class="alert alert-danger">
+                <div *ngIf="st_3.errors?.required || st_4.errors?.required">
+                    Trạng thái không được để trống.
+                </div>
+              </div>
+              <div class="form-group form-inline i-checks">
+                <input [(ngModel)]="status_MJR" #st_3 ="ngModel" id="status_MJR3" type="radio" [value]=0 name="status_MJR" class="form-control-custom radio-custom">
+                <label for="status_MJR3">Inactive</label>
+                &nbsp;&nbsp;&nbsp;
+                <input [(ngModel)]="status_MJR" #st_4="ngModel" id="status_MJR4" type="radio"  [value]=1 name="status_MJR" class="form-control-custom radio-custom">
+                <label for="status_MJR4">Active</label>
+              </div>
+                <input type="hidden" [(ngModel)]="id_MJR" class="form-control" name="id_MJR">
+              </form>
+
+            </div>
+            <div class="modal-footer">
+              <button [disabled]="formEditMajor.invalid" (click)="updateMajor(formEditMajor)" type="submit" class="btn btn-primary" data-dismiss="modal">Lưu</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <!-- end modal edit subject -->
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-header">
+            
+            <button class="btn btn-primary fa fa-plus text-light float-right add-major" data-toggle="modal" data-target="#add-major" (click)="reset(formMajor)"></button>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table id="major-table" class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Mã chuyên ngành</th>
+                    <th>Tên chuyên ngành</th>
+                    <th>Trạng thái</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let major of dataMajor, let i = index">
+                    <th scope="row">{{i+1}}</th>
+                    <td>{{ major.code_MJR }}</td>
+                    <td>{{ major.name_MJR}}</td>
+                    <td *ngIf="major.status_MJR== 0; else other_content">Inactive</td>
+                    <ng-template #other_content><td>Active</td></ng-template>
+                    <td>
+                      <a class="fa fa-check text-warning mt-1 mb-1 ml-1" data-toggle="modal" data-target="#edit-major" (click)="getupdateMajor(major)"></a>
+                      <a disabled *ngIf="major.status_MJR !=0; else delete" class="fa fa-remove text-danger mt-1 mb-1 ml-1" (click)="deleteMajor(major.id_MJR)"></a>
+                      <ng-template #delete><a class="fa fa-remove text-danger mt-1 mb-1 ml-1" (click)="deleteMajor(major.id_MJR)"></a></ng-template>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

@@ -1,0 +1,16 @@
+.dropdown-menu{
+    z-index: 1100 !important;
+  }
+.form-group .select2-container {
+  position: relative;
+  z-index: 2;
+  float: left;
+  width: 100%;
+  margin-bottom: 0;
+  display: table;
+  table-layout: fixed;
+}
+.custom-select{
+  border-radius: 0px!important
+}
+

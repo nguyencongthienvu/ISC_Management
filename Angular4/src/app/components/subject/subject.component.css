@@ -1,0 +1,7 @@
+.custom-select{
+  border-radius: 0px!important
+}
+input.ng-invalid.ng-touched
+{
+  border: 2px solid red;
+}

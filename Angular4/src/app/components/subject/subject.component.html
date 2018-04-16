@@ -1,0 +1,214 @@
+<!-- Breadcrumb-->
+<div class="breadcrumb-holder">
+  <div class="container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="">Trang chủ</a></li>
+      <li class="breadcrumb-item active">Môn học</li>
+    </ul>
+  </div>
+</div>
+<section>
+  <div class="container-fluid">
+    <!-- Page Header-->
+    <header>
+      <h1 class="h3 display">Môn học</h1>
+    </header>
+    <!-- modal add subject -->
+    <div class="modal fade" id="add-subject" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Thông tin môn học</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form #formSubject="ngForm">
+              <div class="form-group">
+                <label for="subjectID"><strong>Mã môn học</strong></label>     
+                    <div *ngIf="code_SBJ2.invalid && (code_SBJ2.dirty || code_SBJ2.touched)" class="alert alert-danger">                 
+                        <div *ngIf="code_SBJ2.errors?.required" >
+                            Mã môn học không được trống.
+                          </div> 
+                        </div>       
+                        <div  *ngIf="code_SBJ2.value"> 
+                          <div *ngIf="show=='Được dùng'" class="alert alert-success">
+                              {{show}}   
+                          </div>
+                          <div *ngIf="show=='Bị trùng với cơ sở dữ liệu'" class="alert alert-danger">
+                              {{show}}   
+                          </div>
+                        </div>  
+                <input (keyup)="keyup(code_SBJ2.value)" type="text" [(ngModel)]="code_SBJ" class="form-control" name="code_SBJ" placeholder="Mã môn học" #code_SBJ2 ="ngModel" required>
+                <!-- <div class="invalid-feedback">Please provide your name.</div> -->          
+              </div>
+              <div class="form-group">
+                <label for="subjectName"><strong>Tên môn học</strong></label>
+                <div *ngIf="name.invalid && (name.dirty || name.touched)" class="alert alert-danger">
+                  <div *ngIf="name.errors?.required">
+                      Tên môn học không được trống.
+                  </div>
+                </div>
+                <input type="text" [(ngModel)]="name_SBJ" class="form-control" name="name_SBJ" placeholder="Tên môn học" #name="ngModel" required>
+              </div>
+              <div class="form-group">
+                <label for="hour"><strong>Số giờ</strong></label>
+                <div *ngIf="hour.invalid && (hour.dirty || hour.touched)" class="alert alert-danger">
+                  <div *ngIf="hour.errors?.required">
+                      Số giờ không hợp lệ.
+                  </div>
+                  <div *ngIf="hour.errors?.min ||hour.errors?.pattern">
+                      Số giờ không được âm hoặc giờ phải là số
+                  </div>
+                </div>
+                <input type="number" [(ngModel)]="hour_SBJ" class="form-control" name="hour_SBJ" placeholder="Số giờ" min="0" value="0" #hour="ngModel" pattern="[0-9]*" required>
+              </div>
+              <div class="form-group">
+                <label for="kindOfRoom"><strong>Loại phòng</strong></label>
+                <div *ngIf="kind.invalid && (kind.dirty || kind.touched)" class="alert alert-danger">
+                    <div *ngIf="kind.errors?.required">
+                        Loại phòng không được để trống.
+                    </div>
+                  </div>
+                <input type="text" [(ngModel)]="kindOfRoom" class="form-control" name="kindOfRoom" placeholder="Loại phòng" #kind="ngModel" required>
+              </div>
+              <label for="status_SBJ"><strong>Trạng thái</strong></label><br>
+              <div *ngIf="(st_1.invalid && (st_1.dirty || st_1.touched))||(st_2.invalid && (st_2.dirty || st_2.touched))" class="alert alert-danger">
+                  <div *ngIf="st_1.errors?.required || st_2.errors?.required">
+                      Trạng thái không được để trống.
+                  </div>
+                </div>
+              <div class="form-group form-inline i-checks">
+                  <input [(ngModel)]="status_SBJ" id="status_SBJ1" type="radio" [value]=0 name="status_SBJ" class="form-control-custom radio-custom" #st_1="ngModel" required>
+                  <label for="status_SBJ1">Inactive</label>
+                &nbsp;&nbsp;&nbsp;
+                  <input [(ngModel)]="status_SBJ" id="status_SBJ2" type="radio"  [value]=1 name="status_SBJ" class="form-control-custom radio-custom" #st_2="ngModel" required>
+                  <label for="status_SBJ2">Active</label>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button [disabled]="formSubject.invalid || !kiemtra" (click)="onSubmit(formSubject)" type="submit" class="btn btn-primary" data-dismiss="modal">Thêm</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end modal addd subject -->
+
+    <!-- modal edit subject -->
+    <div id="edit-subject" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Thông tin môn học</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form #formEditSubject="ngForm">
+              <div class="form-group">
+                <input readonly type="text" [(ngModel)]="code_SBJ" class="form-control" name="code_SBJ" #cst="ngModel" placeholder="Mã môn học" required>
+              </div>
+              <div class="form-group">
+                <label for="subjectName"><strong>Tên môn học</strong></label>
+                <div *ngIf="name2.invalid && (name2.dirty || name2.touched)" class="alert alert-danger">
+                    <div *ngIf="name2.errors?.required" >
+                        Tên môn học không được trống.
+                    </div>
+                </div>
+                <input type="text" [(ngModel)]="name_SBJ" class="form-control" name="name_SBJ" placeholder="Tên môn học" #name2="ngModel" required>
+              </div>
+              <div class="form-group">
+                <label for="hour"><strong>Số giờ</strong></label>
+                <div *ngIf="num.invalid && (num.dirty||num.touched)" class="alert alert-danger">
+                    <div *ngIf="num.errors?.required">
+                        Số giờ không hợp lệ.
+                    </div>
+                  <div *ngIf="num.errors?.pattern">
+                      Số giờ phải là số dương hoặc là số.
+                  </div>
+                </div>
+                <input type="number" pattern="[0-9]*" #num="ngModel" [(ngModel)]="hour_SBJ" class="form-control" name="hour_SBJ" placeholder="Số giờ" min="0" value="0" required>
+              </div>
+              <div class="form-group">
+                <label for="kindOfRoom"><strong>Loại phòng</strong></label>
+                <div *ngIf="type.invalid && (type.dirty || type.touched)" class="alert alert-danger">
+                  <div *ngIf=type.errors?.required>
+                    Loại phòng không được trống
+                  </div>
+                </div>
+                <input type="text" #type="ngModel" [(ngModel)]="kindOfRoom" class="form-control" name="kindOfRoom" placeholder="Loại phòng" required>
+              </div>
+              <input type="hidden" [(ngModel)]="id_SBJ" class="form-control" name="id_SBJ">
+              <label><strong>Trạng thái</strong></label><br>
+              <div *ngIf="(st_3.invalid && (st_3.dirty || st_3.touched))||(st_4.invalid && (st_4.dirty || st_4.touched))" class="alert alert-danger">
+                <div *ngIf="st_3.errors?.required || st_4.errors?.required">
+                    Trạng thái không được để trống.
+                </div>
+              </div>
+              <div class="form-group form-inline i-checks">
+                <input [(ngModel)]="status_SBJ" #st_3 ="ngModel" id="status_SBJ1" type="radio" [value]=0 name="status_SBJ" class="form-control-custom radio-custom">
+                <label for="status_SBJ1">Inactive</label>
+                &nbsp;&nbsp;&nbsp;
+                <input [(ngModel)]="status_SBJ" #st_4="ngModel" id="status_SBJ2" type="radio"  [value]=1 name="status_SBJ" class="form-control-custom radio-custom">
+                <label for="status_SBJ2">Active</label>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button [disabled]="formSubject.invalid" (click)="updateSubject(formEditSubject)" type="submit" class="btn btn-primary" data-dismiss="modal">Lưu</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- end modal edit subject -->
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-header">
+            <button class="btn btn-primary fa fa-plus text-light float-right add-subject" (click)="Reset(formSubject)"></button>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table id="subject-table" class="table table-bordered table-hover" width=100%>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Mã môn học</th>
+                    <th>Tên môn học</th>
+                    <th>Số giờ</th>
+                    <th>Trạng thái</th>
+                    <th>Loại phòng</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let subject of dataSubject, let i = index">
+                    <th scope="row">{{i+1}}</th>
+                    <td>{{ subject.code_SBJ }}</td>
+                    <td>{{ subject.name_SBJ }}</td>
+                    <td>{{ subject.hour_SBJ }}</td>
+                    <td *ngIf="subject.status_SBJ== 0; else other_content">Inactive </td>
+                    <ng-template #other_content><td>Active</td></ng-template>
+                    <td>{{ subject.kindOfRoom }}</td>
+                    <td>
+                      <a class="fa fa-check text-warning mt-1 mb-1 ml-1" data-toggle="modal" data-target="#edit-subject" (click)="getupdateSubject(subject)"></a>
+                      <a disabled *ngIf="subject.status_SBJ== 1; else delete" class="fa fa-remove text-danger mt-1 mb-1 ml-1" (click)="deleteSubject(subject.id_SBJ)"></a>
+                      <ng-template #delete><a class="fa fa-remove text-danger mt-1 mb-1 ml-1" (click)="deleteSubject(subject.id_SBJ)"></a></ng-template>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
